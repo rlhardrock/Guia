@@ -59,11 +59,11 @@ Añadimos todos los archivos para el commit
 ```
 Hacemos el primer commit
 ```ssh
-	git commit -m "Texto que identifique por que se hizo el commit"
+	git commit -m "message"
 ```
 subimos al repositorio
 ```ssh
-	git push origin master
+	git push -u origin master
 ```
 
 ## GIT CLONE
@@ -78,7 +78,7 @@ Dentro de la carpeta que genera, comprobar la URL del repositorio:
 ```
 Antes de realizar modificaciones agregar la URL del repositorio original del proyecto:
 ```ssh
-	git remote add upstream https://github.com/user/original-repo(Fork)
+	git remote add upstream <url>   url => https://github.com/user/original-repository.git(Fork)
 ```
 Comprobar:
 ```ssh
