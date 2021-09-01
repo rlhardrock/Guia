@@ -66,6 +66,15 @@ subimos al repositorio
 	git push -u origin master
 ```
 
+## COMMENCE REPOSITORY MYSELF
+Cuando genera Error Fatal
+porque el R se elimino y aun aparece enel cache
+reconfigura la direccion y subir nuevamente
+
+```ssh
+	git remote set-url origin https://github.com/your/repository
+```
+
 ## GIT CLONE
 
 Clonamos el repositorio de github o bitbucket
