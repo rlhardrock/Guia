@@ -430,3 +430,26 @@ Merge con master de un fork
 
 	git flow hotfix finish hotfix_branch
 ```
+
+## CAMBIO DE RAMA MAESTRA
+
+```
+	git checkout new_master_branch -> (new main or master branch)
+
+	git merge --strategy=ours old_master_branch -m "Making New MASTER Branch" -> (keep the content of this branch, but record a merge)
+	git merge --strategy=recursive   -> (alternative)
+	
+	git checkout old_master_branch
+	
+	git merge new_master_branch
+	
+	Recomendation  
+	git commit -m "Fusion-Confirm"	
+	
+	git checkout old_master_branch
+	
+	git reset --hard new_master_branch
+	
+	git push -f origin new_master_branch
+	
+```
