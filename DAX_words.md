@@ -84,7 +84,6 @@ SELECTEDVALUE
 
 ## FINANCIERAS
 ```ssh
-Información general sobre las funciones financieras
 ACCRINT
 ACCRINTM
 AMORDEGRC
