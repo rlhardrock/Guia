@@ -111,3 +111,46 @@ Total Ordenes PU Alto = CALCULATE([Total Ordenes], FILTER(DimProduct, DimProduct
 
 ## Módulo: SUMX
 
+```ssh
+Total Ingresos = SUMX(FactSales, FactSales[Cantidad Total] * RELATED(DimProduct[UnitPrice]) * (1 - FactSales[Descuento]))
+```
+## Módulo: RANK
+
+```ssh
+Rank Ingresos SubCatProductos = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALL(DimProductSubcategory), [Total Ingresos]))
+Rank Ingresos SubCatProductos Seleccionados = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALLSELECTED(DimProductSubcategory), [Total Ingresos]))
+Rank Ingresos Tiendas = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALL(DimStores), [Total Ingresos]))
+Rank Ingresos Tiendas Cat = IF(HASONEVALUE(DimStores[Tienda]), SWITCH( TRUE(),
+                                                               [Rank Ingresos Tiendas] <= 10 , "Top 10",
+                                                               [Rank Ingresos Tiendas] <= 25 , "Sobresaliente",
+                                                               [Rank Ingresos Tiendas] <= 50 , "Bueno",
+                                                               [Rank Ingresos Tiendas] <= 100 , "Regular",
+                                                               "Incompetente") , BLANK())
+Rank Ingresos Tiendas Cat Unichar = 
+    VAR star = "⭐️"
+    VAR star0 = UNICHAR(9734)
+    RETURN
+IF(HASONEVALUE(DimStores[Tienda]),SWITCH( TRUE(),
+                                  [Rank Ingresos Tiendas] <= 10 , REPT(star,5),
+                                  [Rank Ingresos Tiendas] <= 25 , REPT(star,4) & REPT(star0,1),
+                                  [Rank Ingresos Tiendas] <= 50 , REPT(star,3) & REPT(star0,2),
+                                  [Rank Ingresos Tiendas] <= 100 , REPT(star,2) & REPT(star0,3),
+                                  REPT(star,1) & REPT(star0,4)) , BLANK())
+                                 
+Rank Ingresos Tiendas Seleccionadas = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALLSELECTED(DimStores), [Total Ingresos]))
+```
+
+## Móduño: SWITCH
+
+```ssh
+Total Selección = IF(ISCROSSFILTERED(Selector[Selección]),
+
+SWITCH(TRUE(),
+VALUES(Selector[Selección]) = "Total Ingresos", [Total Ingresos],
+VALUES(Selector[Selección]) = "Total Costos", [Total Costos],
+VALUES(Selector[Selección]) = "Total Utilidad", [Total Utilidad],
+[Total Ingresos]),
+[Total Ingresos])
+```
+
+                                 
