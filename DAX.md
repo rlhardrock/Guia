@@ -140,7 +140,7 @@ IF(HASONEVALUE(DimStores[Tienda]),SWITCH( TRUE(),
 Rank Ingresos Tiendas Seleccionadas = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALLSELECTED(DimStores), [Total Ingresos]))
 ```
 
-## Móduño: SWITCH
+## Módulo: SWITCH
 
 ```ssh
 Total Selección = IF(ISCROSSFILTERED(Selector[Selección]),
@@ -153,4 +153,108 @@ VALUES(Selector[Selección]) = "Total Utilidad", [Total Utilidad],
 [Total Ingresos])
 ```
 
-                                 
+## Módulo: Funciones de Time Intelligence
+
+```ssh
+YTD Ingresos = CALCULATE([Total Ingresos], DATESYTD(DimCalendar[DateKey]))
+YTD Ingresos 2 = TOTALYTD([Total Ingresos],DimCalendar[DateKey])
+MTD Ingresos = TOTALMTD([Total Ingresos],DimCalendar[DateKey])
+```
+
+## Módulo: Funciones de Variación
+
+```ssh
+Total Ingresos LY = CALCULATE([Total Ingresos], SAMEPERIODLASTYEAR(DimCalendar[DateKey]))
+Total Ingresos Variacion LY = [TotalIngresos] - [Total Ingresos LY]
+Total Ingresos Variacion LM = CALCULATE([Total Ingresos], DATEADD(DimCalendar[DateKey],-1,MONTH))
+```
+
+## Módulo: Modificando Medidas
+
+```ssh
+Descuento = IF(FactSales[TipoVenta] = "Mayoreo" && FactSales[channelKey] = 1 && FactSales[PromotionKey] = 1,0.05,RELATED(DimPromotion[DiscountPercent]))
+Total Ingresos = SUMX(FactSales, FactSales[CantidadTotal] * RELATED(DimProduct[UnitPrice]) * (1 - FactSales[Descuento]))
+// Total Ingresos es la cantidad de piezas multiplicado por el precio unitario y por el descuento aplicado
+
+Total Ingresos Sin Dcto = SUMX(FactSales, FactSales[CantidadTotal] * RELATED(DimProduct[UnitPrice]))
+```
+
+## Módulo: Función RANKX
+
+```ssh
+Rank Ingresos Tiendas = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALL(DimStores), [Total Ingresos]))
+Rank Ingresos Tiendas Seleccionadas = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALLSELECTED(DimStores), [Total Ingresos]))
+Rank Ingresos SubCatProductos = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALL(DimProductSubcategory), [Total Ingresos]))
+Rank Ingresos SubCatProductos Seleccionados = IF( ISBLANK([Total Ingresos]) , BLANK(), RANKX(ALLSELECTED(DimProductSubcategory), [Total Ingresos]))
+```
+
+## Módulo: Función SWITCH
+
+```
+Categoria Tamaño Tienda = SWITCH( TRUE(),
+DimStores[SellingAreaSize] <= 500, "Pequeña",
+DimStores[SellingAreaSize] <= 800, "Mediana",
+DimStores[SellingAreaSize] > 800, "Grande",
+"Otro")
+
+---------------------
+
+Rank Ingresos Tiendas Cat = 
+IF(HASONEVALUE(DimStores[Tienda]),
+SWITCH( TRUE(),
+[Rank Ingresos Tiendas] <= 10 , "Top 10",
+[Rank Ingresos Tiendas] <= 25 , "Sobresaliente",
+[Rank Ingresos Tiendas] <= 50 , "Bueno",
+[Rank Ingresos Tiendas] <= 100 , "Regular",
+"Incompetente") , BLANK())
+
+---------------------
+
+Star Unichar = 
+VAR star = UNICHAR(9733)
+VAR star0 = UNICHAR(9734)
+RETURN
+REPT(star, 4) & star0
+
+---------------------
+
+Rank Ingresos Tiendas Cat Unichar = 
+VAR star = "⭐️"
+VAR star0 = UNICHAR(9734)
+RETURN
+IF(HASONEVALUE(DimStores[Tienda]),
+SWITCH( TRUE(),
+[Rank Ingresos Tiendas] <= 10 , REPT(star,5),
+[Rank Ingresos Tiendas] <= 25 , REPT(star,4) & REPT(star0,1),
+[Rank Ingresos Tiendas] <= 50 , REPT(star,3) & REPT(star0,2),
+[Rank Ingresos Tiendas] <= 100 , REPT(star,2) & REPT(star0,3),
+REPT(star,1) & REPT(star0,4)) , BLANK())
+```
+
+## Módulo: Selector con SWITCH
+
+```ssh
+Total Costos = SUMX(FactSales, FactSales[Cantidad Total] * RELATED(DimProduct[UnitCost]))
+Total Utilidad = [Total Ingresos] - [Total Costos]
+
+---------------------
+
+Total Selección = 
+IF(ISCROSSFILTERED(Selector[Selección]),
+SWITCH(TRUE(),
+VALUES(Selector[Selección]) = "Total Ingresos", [Total Ingresos],
+VALUES(Selector[Selección]) = "Total Costos", [Total Costos],
+VALUES(Selector[Selección]) = "Total Utilidad", [Total Utilidad],
+[Total Ingresos]),
+[Total Ingresos])
+```
+
+
+
+
+
+
+
+
+
+
