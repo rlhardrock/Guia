@@ -1,3 +1,17 @@
+## SSH
+
+Configurar SSH local para conectarlo con GitHub
+```ssh
+	cd ~/.ssh
+	rm -r id*
+	rm -r known_hosts
+	ssh-keygen -t ed25519 -C "email.com"
+	eval "$(ssh-agent)"
+	ssh-add ~/.ssh/id_ed25519
+	xclip -selection clipboard < ~/.ssh/id_ed25519.pub
+	ssh -T git@github.com
+```
+
 ## HELP SOS
 
 Lista completa con todos los subcomandos disponibles
